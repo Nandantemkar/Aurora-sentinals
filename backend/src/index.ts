@@ -15,6 +15,21 @@ import { authenticateToken, AuthRequest } from './middlewares/auth';
 dotenv.config();
 
 const app = express();
+
+
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// handle preflight requests
+app.options("*", cors());
+app.use(express.json());
+
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
