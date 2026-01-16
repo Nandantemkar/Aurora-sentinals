@@ -16,7 +16,7 @@ export default function SecurityAlertDetail() {
   const [liveFeed, setLiveFeed] = useState<any[]>([]);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [attachmentUrls, setAttachmentUrls] = useState<string[]>([]);
-  const [attachmentsLoading, setAttachmentsLoading] = useState(false);
+  const [attachmentsLoading, _setAttachmentsLoading] = useState(false);
   const attachmentPaths = Array.isArray((alert as any)?.attachments) ? ((alert as any).attachments as string[]) : [];
   const [chatLoading, setChatLoading] = useState(false);
   const [chatError, setChatError] = useState<string | null>(null);

@@ -166,7 +166,7 @@ export function calculateTotalRisk(
 /**
  * Check if auto-SOS should be triggered
  */
-export function shouldTriggerAutoSOS(totalRisk: number, presentationMode?: boolean): boolean {
+export function shouldTriggerAutoSOS(totalRisk: number, _presentationMode?: boolean): boolean {
   const threshold = 50;
   if (totalRisk <= threshold) {
     return false;
