@@ -1,12 +1,29 @@
-import jwt from 'jsonwebtoken';
+
 import dotenv from 'dotenv';
+import jwt, { Secret, SignOptions } from "jsonwebtoken";
+
+
 
 dotenv.config();
 
-const accessSecret = process.env.JWT_ACCESS_SECRET || 'default-access-secret';
-const refreshSecret = process.env.JWT_REFRESH_SECRET || 'default-refresh-secret';
-const accessExpiry = process.env.JWT_ACCESS_EXPIRY || '15m';
-const refreshExpiry = process.env.JWT_REFRESH_EXPIRY || '7d';
+const accessSecret: Secret = process.env.JWT_ACCESS_SECRET!;
+const refreshSecret: Secret = process.env.JWT_REFRESH_SECRET!;
+
+
+if (!accessSecret) {
+  throw new Error("JWT_ACCESS_SECRET is not defined");
+}
+
+if (!refreshSecret) {
+  throw new Error("JWT_REFRESH_SECRET is not defined");
+}
+const accessExpiry: SignOptions["expiresIn"] =
+  (process.env.JWT_ACCESS_EXPIRY as SignOptions["expiresIn"]) ?? "15m";
+
+const refreshExpiry: SignOptions["expiresIn"] =
+  (process.env.JWT_REFRESH_EXPIRY as SignOptions["expiresIn"]) ?? "7d";
+
+
 
 export interface TokenPayload {
   userId: string;
@@ -15,29 +32,44 @@ export interface TokenPayload {
 }
 
 export function generateAccessToken(payload: TokenPayload): string {
-  return jwt.sign(payload, accessSecret, {
-    expiresIn: accessExpiry,
-  });
+  return jwt.sign(
+    payload,
+    accessSecret as string,
+    { expiresIn: accessExpiry }
+  );
+
 }
 
 export function generateRefreshToken(payload: TokenPayload): string {
-  return jwt.sign(payload, refreshSecret, {
+  return jwt.sign(payload, refreshSecret as string, {
     expiresIn: refreshExpiry,
   });
 }
 
 export function verifyAccessToken(token: string): TokenPayload {
   try {
-    return jwt.verify(token, accessSecret) as TokenPayload;
+    const decoded = jwt.verify(token, accessSecret);
+
+    if (typeof decoded === "string") {
+      throw new Error("Invalid token payload");
+    }
+
+    return decoded as TokenPayload;
   } catch (error) {
-    throw new Error('Invalid or expired access token');
+    throw new Error("Invalid or expired access token");
   }
 }
 
 export function verifyRefreshToken(token: string): TokenPayload {
   try {
-    return jwt.verify(token, refreshSecret) as TokenPayload;
+    const decoded = jwt.verify(token, refreshSecret);
+
+    if (typeof decoded === "string") {
+      throw new Error("Invalid token payload");
+    }
+
+    return decoded as TokenPayload;
   } catch (error) {
-    throw new Error('Invalid or expired refresh token');
+    throw new Error("Invalid or expired refresh token");
   }
 }
