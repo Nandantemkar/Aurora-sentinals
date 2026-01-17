@@ -39,12 +39,8 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: allowedOrigins,
-    credentials: true,
-  },
-});
+const io = new Server(httpServer);
+
 
 const PORT = process.env.PORT || 3001;
 
