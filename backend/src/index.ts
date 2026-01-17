@@ -24,21 +24,20 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('CORS blocked'));
-      }
-    },
+    origin: [
+      "https://aurora-sentinal.space",
+      "https://www.aurora-sentinal.space",
+      /^https:\/\/.*\.vercel\.app$/,
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
-app.use(express.json());
 
+app.use(express.json());
+app.use(cookieParser());
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
